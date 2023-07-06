@@ -27,4 +27,12 @@
     </EmbeddedResource>
   </ItemGroup>
 
+	<ItemGroup>
+		<None Update="SoTPuzzle.db">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+
+
 </Project>
