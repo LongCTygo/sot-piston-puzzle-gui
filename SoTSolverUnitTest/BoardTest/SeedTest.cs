@@ -42,5 +42,13 @@ namespace SoTSolverUnitTest.BoardTest
         {
             Assert.Throws<ArgumentException>((() => new Board(8388608)));
         }
+
+        [Test]
+        public void UnitTest_6()
+        {
+            int seed = 100;
+            Board b = new Board(seed);
+            Assert.AreEqual(seed, b.Seed);
+        }
     }
 }

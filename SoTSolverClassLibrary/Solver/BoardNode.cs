@@ -11,7 +11,7 @@ namespace SoTSolverClassLibrary.Solver
     public class BoardNode
     {
         public static readonly double SmartLimit = 1.5;
-        public List<BoardNode> Children { get; set; } = new List<BoardNode>();
+        public List<BoardNode?> Children { get; set; } = new List<BoardNode?>();
         public Board Board { get; set; }
         public BoardNode? ParentNode { get; set; }
 

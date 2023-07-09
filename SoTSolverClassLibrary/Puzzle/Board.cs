@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using SoTSolverClassLibrary.DataAccess;
 using SoTSolverClassLibrary.Utils;
 
 namespace SoTSolverClassLibrary.Puzzle
@@ -32,16 +33,10 @@ namespace SoTSolverClassLibrary.Puzzle
         }
 
         //Constructors
-        public Board()
+        public Board(Seed s)
         {
-            for (int x = 0; x < 4; x++)
-            {
-                for (int y = 0; y < 4; y++)
-                {
-                    BoardArray[x,y] = 0;
-                }
-            }
-            this.Goal = new Vector2Int();
+            ParseSeed(s.SeedValue);
+            this.seed = s.SeedValue;
         }
 
         public Board(int[,] boardArray, Vector2Int goal, Move? lastMove)
@@ -62,15 +57,18 @@ namespace SoTSolverClassLibrary.Puzzle
 
         private Board(int[,] boardArray, Vector2Int goal, int dir, int slot)
         {
-            BoardArray = boardArray;
-            Goal = goal;
-            LastMove = new Move(dir, slot);
+            Setup(boardArray,new Move(dir,slot),goal);
         }
 
         //Setup
 
         private void Setup(int[,] boardArray, Move? lastMove, Vector2Int goal)
         {
+            if (boardArray.GetLength(0) != 4 || boardArray.GetLength(1) != 4)
+            {
+                throw new ArgumentException(
+                    $"Expected int[4,4] for boardArray, instead got int[{boardArray.GetLength(0)},{boardArray.GetLength(1)}]");
+            }
             BoardArray = boardArray;
             LastMove = lastMove;
             Goal = goal;
@@ -283,22 +281,31 @@ namespace SoTSolverClassLibrary.Puzzle
             return 3;
         }
 
-        private Vector2Int? GetPlayerPosition()
+        private Vector2Int GetPlayerPosition()
         {
+            Vector2Int? player = null;
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
                     if (BoardArray[i,j] == 2)
                     {
-                        return new Vector2Int(i, j);
+                        if (player == null)
+                        {
+                            player = new Vector2Int(i, j);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"At least two players exist in the current board state: At [{Goal.X},{Goal.Y}] and [{i},{j}].");
+                        }
                     }
                 }
             }
-            return null;
+            if (player != null) return player;
+            throw new InvalidOperationException("Player does not exists in BoardArray. A player is denoted by a '2'");
         }
 
-        public bool IsGoalCovered()
+        public bool IsObstructed()
         {
             return BoardArray[Goal.X,Goal.Y] != 0;
         }

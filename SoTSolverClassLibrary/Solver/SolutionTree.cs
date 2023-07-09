@@ -8,17 +8,17 @@ namespace SoTSolverClassLibrary.Solver
 {
     public class SolutionTree
     {
-        public BoardNode Root { get; set; }
+        public BoardNode? Root { get; set; }
 
-        public SolutionTree(BoardNode root)
+        public SolutionTree(BoardNode? root)
         {
             Root = root;
         }
 
 
-        public BoardNode SolveBreadthFirst(int maxDepth, int maxSearch, bool ignoreBadMoves)
+        public BoardNode? SolveBreadthFirst(int maxDepth, int maxSearch, bool ignoreBadMoves)
         {
-            Queue<BoardNode> queue = new Queue<BoardNode>();
+            Queue<BoardNode?> queue = new Queue<BoardNode?>();
             List<double> bestDist = new List<double>();
 
             bestDist.Add(Root.Board.GetDistance());
@@ -27,7 +27,7 @@ namespace SoTSolverClassLibrary.Solver
             queue.Enqueue(Root);
             while (queue.Any())
             {
-                BoardNode p = queue.Dequeue();
+                BoardNode? p = queue.Dequeue();
                 currentProcess++;
                 if (currentProcess > maxSearch)
                 {
@@ -52,7 +52,7 @@ namespace SoTSolverClassLibrary.Solver
                 else if (result == -1)
                 {
                     p.CreateChildren(ignoreBadMoves);
-                    foreach (BoardNode c in p.Children)
+                    foreach (BoardNode? c in p.Children)
                     {
                         if (depthP <= 3 || c.Board.GetDistance() < bestDist[depthP - 4])
                         {
@@ -68,6 +68,16 @@ namespace SoTSolverClassLibrary.Solver
                 }
             }
             return null;
+        }
+
+        public BoardNode? SolveBreadthFirst()
+        {
+            return SolveBreadthFirst(20, 10000000, true);
+        }
+
+        public BoardNode? SolveBreadthFirst(int maxDepth)
+        {
+            return SolveBreadthFirst(maxDepth, 10000000, true);
         }
     }
 }

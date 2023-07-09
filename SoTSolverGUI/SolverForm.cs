@@ -377,7 +377,7 @@ namespace SoTSolverGUI
                 return;
             }
             SolutionTree tree = new SolutionTree(new BoardNode(board));
-            BoardNode node = tree.SolveBreadthFirst((int)maxDepthBox.Value, (int)maxSearchBox.Value, ignoreBadMovesBox.Checked);
+            BoardNode? node = tree.SolveBreadthFirst((int)maxDepthBox.Value, (int)maxSearchBox.Value, ignoreBadMovesBox.Checked);
             if (node == null)
             {
                 MessageBox.Show("No Solutions :(");
@@ -404,7 +404,7 @@ namespace SoTSolverGUI
                 int maxMoves = (int)maxMovesBox.Value;
                 bool allowObstructed = obstructedCheckBox.Checked;
                 SeedDAO dao = new SeedDAO();
-                Seed randomSeed = dao.GetRandomSeed(minMoves, maxMoves, allowObstructed);
+                Seed? randomSeed = dao.GetRandomSeed(minMoves, maxMoves, allowObstructed);
                 if (randomSeed == null)
                 {
                     MessageBox.Show("No Seeds Found D:", "Error");

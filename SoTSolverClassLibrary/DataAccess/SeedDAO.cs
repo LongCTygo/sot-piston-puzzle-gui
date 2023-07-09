@@ -9,16 +9,32 @@ namespace SoTSolverClassLibrary.DataAccess
 {
     public class SeedDAO
     {
-        private Random random;
+        private Random random = new();
+        private int? randSeed = null;
+
+        public int RandSeed
+        {
+            get
+            {
+                if (randSeed == null)
+                {
+                    return random.Next();
+                }
+                return randSeed.Value;
+            }
+
+            set => randSeed = value;
+        }
         public SeedDAO()
         {
-            random = new Random();
         }
 
-        public SeedDAO(int randSeed)
+        public SeedDAO(int r)
         {
-            random = new Random(randSeed);
+            RandSeed = r;
         }
+
+        public void ResetSeed() => RandSeed = random.Next();
 
         public List<Seed> GetRandomSeeds(int minMoves, int maxMoves, bool allowObstructed, int amount)
         {
@@ -30,8 +46,9 @@ namespace SoTSolverClassLibrary.DataAccess
             using var conn = new SQLiteConnection(@"Data Source=SoTPuzzle.db;New=False;");
             using var cmd = conn.CreateCommand();
             conn.Open();
-            cmd.CommandText = "SELECT * FROM Puzzles WHERE moves_required BETWEEN @min AND @max AND obstructed <= @obstructed ORDER BY RANDOM() LIMIT @limit";
+            cmd.CommandText = "SELECT * FROM Puzzles WHERE moves_required BETWEEN @min AND @max AND obstructed <= @obstructed ORDER BY SIN(seed+@seed) LIMIT @limit";
             //Values
+            cmd.Parameters.AddWithValue("@seed", RandSeed);
             cmd.Parameters.AddWithValue("@min", minMoves);
             cmd.Parameters.AddWithValue("@max", maxMoves);
             cmd.Parameters.AddWithValue("@obstructed", allowObstructed ? 1 : 0);
